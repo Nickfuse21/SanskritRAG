@@ -1,151 +1,74 @@
-# Sanskrit Retrieval Augmented Generation (RAG) System
-# ---------------------------------------------------
-# A CPU-based Sanskrit Question Answering System
-# Built using Python, ChromaDB, Sentence Transformers and Gemini API
-# ---------------------------------------------------
+# SanskritRAG – CPU-Based Sanskrit Retrieval Augmented Generation System
 
+SanskritRAG is a Retrieval-Augmented Generation (RAG) system built for Sanskrit question answering.  
+It retrieves relevant content from Sanskrit documents before generating answers, ensuring grounded and context-aware responses.  
+The system is designed to run entirely on CPU without any GPU dependency.
 
-## // PROJECT OBJECTIVE
-- Build a working Retrieval-Augmented Generation (RAG) system
-- Support Sanskrit text understanding and question answering
-- Ensure the system runs completely on CPU (no GPU usage)
-- Retrieve text from documents instead of blind AI generation
-- Produce grounded, controlled and non-hallucinatory responses
+---
 
+## Project Overview
 
-## // SYSTEM OVERVIEW
-# The project follows a simple & logical RAG workflow:
-1. Sanskrit PDF documents are placed inside the `data/` folder
-2. System reads and extracts Sanskrit text
-3. Text is split into meaningful overlapping chunks
-4. Embeddings are generated using a multilingual sentence-transformer
-5. Embeddings stored in ChromaDB (local vector database)
-6. User enters Sanskrit query in terminal
-7. Relevant Sanskrit chunks are retrieved
-8. Gemini model generates answer using ONLY retrieved context
-9. If answer not present → System returns "I don’t know"
+The objective of this project is to create a reliable Sanskrit question-answering system that avoids blind AI generation. Instead of letting a language model hallucinate answers, the system first retrieves semantically relevant content from uploaded Sanskrit PDFs and then generates answers strictly based on that retrieved context.
 
+The entire pipeline is built using Python, ChromaDB, Sentence Transformers, and Google Gemini API.
 
-## // KEY SYSTEM CHARACTERISTICS
-- Fully CPU based execution
-- Local persistent ChromaDB storage
-- Real Sanskrit text support
-- No hallucination behavior
-- Clean modular pipeline
+---
 
+## How the System Works
 
-## // TECHNOLOGIES, FRAMEWORKS & LIBRARIES
+The workflow follows a structured RAG pipeline:
 
-# Programming Language
+1. Sanskrit PDF documents are placed inside the `data/` directory.
+2. The system extracts text from PDFs.
+3. Extracted text is split into meaningful overlapping chunks.
+4. Multilingual embeddings are generated for each chunk.
+5. These embeddings are stored in a local ChromaDB vector database.
+6. The user enters a Sanskrit query in the terminal.
+7. Relevant text chunks are retrieved using semantic similarity search.
+8. Gemini generates the final answer using ONLY the retrieved context.
+9. If the answer is not present in the retrieved content, the system returns:  
+   **"I don’t know"**
+
+This ensures correctness, transparency, and reduced hallucination.
+
+---
+
+## Key Features
+
+- Fully CPU-based execution
+- Local persistent vector database using ChromaDB
+- Multilingual embedding model supporting Sanskrit
+- Controlled and grounded answer generation
+- Clear modular architecture
+- Safe fallback when answer is not found
+
+---
+
+## Technology Stack
+
+Programming Language:
 - Python 3.11+
 
-# Vector Database
-- ChromaDB
-  -> Stores embeddings
-  -> Performs similarity search
-  -> Persists data locally
+Vector Database:
+- ChromaDB (local persistent storage for embeddings)
 
-# Embedding & Text Processing
-- sentence-transformers
-  -> Multilingual embedding model
-  -> Supports Sanskrit text
-  -> Runs on CPU
+Embedding Model:
+- sentence-transformers/distiluse-base-multilingual-cased-v2  
+  (Multilingual model supporting Sanskrit, runs on CPU)
 
-- Model Used:
-  -> sentence-transformers/distiluse-base-multilingual-cased-v2
+Text Processing:
+- langchain-community (document loading)
+- langchain-text-splitters (chunking long text)
+- pypdf (PDF extraction)
 
-- langchain-community
-  -> Document loading utilities
+Large Language Model:
+- Google Gemini API (google-genai)
+  - Generates answers strictly using retrieved context
+  - Avoids unsupported generation
 
-- langchain-text-splitters
-  -> Splits long Sanskrit text into chunks
+Environment Management:
+- python-dotenv (secure API key handling)
 
-- pypdf
-  -> Extracts text from PDF files
-
-# Environment & Configuration
-- python-dotenv
-  -> Safely manages GEMINI API Key
-
-# GPU Disable Mechanism
-- os.environ["CUDA_VISIBLE_DEVICES"] = ""
-  -> Forces CPU only execution
-
-# Large Language Model
-- google-genai (Gemini API)
-  -> Generates final answers
-  -> Strictly uses retrieved Sanskrit context
-  -> Replies "I don’t know" if answer not found
-
-
-## // FOLDER STRUCTURE
-project/
- ├── code/
- │    ├── fill_db.py
- │    ├── ask.py
- │    ├── requirements.txt
- │
- ├── data/
- │    ├── Sanskrit PDFs here
- │
- ├── chroma_db/
- │    ├── auto created database
- │
- ├── report/
- │    ├── Technical Report PDF
- │
- ├── README.md
-
-
-## // INSTALLATION & SETUP
-
-# STEP 1 — Create Virtual Environment
-python -m venv venv
-
-# STEP 2 — Activate Environment
-Windows:
-venv\Scripts\activate
-
-Mac/Linux:
-source venv/bin/activate
-
-# STEP 3 — Install Dependencies
-pip install -r requirements.txt
-
-# STEP 4 — Add Gemini API Key
-Create `.env` file & add:
-GEMINI_API_KEY=your_api_key_here
-
-
-## // EXECUTION
-
-# STEP 1 — Build Database
-First run python fill_db.py
-if got any error run it again
-
-# STEP 2 — Ask Questions
-Then run python ask.py
-and it will let you ask question and retrieve answers based on the uploaded data file
-
-# Enter Sanskrit Query in Terminal
-Example:
-कथायाः मुख्योपदेशः कः?
-
-
-## // FAILURE BEHAVIOUR
-# If answer not found:
-System safely responds:
-"I don't know"
-
-
-## // CPU ONLY CONFIRMATION
-- GPU is disabled
-- Embeddings run on CPU
-- Model explicitly locked to CPU
-- System reproducible on normal laptops
-
-
-## // CONCLUSION
-This project demonstrates a complete, stable and explainable Sanskrit RAG System.
-It retrieves, understands and answers Sanskrit queries responsibly,
-ensuring correctness, reliability and CPU-only execution.
+CPU Enforcement:
+```python
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
